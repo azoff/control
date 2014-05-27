@@ -40,14 +40,17 @@ Represent the problem functionally, such brevity!
 ```go
 import "github.com/azoff/control"
 
-func DoThings(next Variable) (Variable, error) {
+func DoThings(a Variable) (Variable, error) {
 
-	doThing := func() error {
-		return DoThing(next)
+	doValue := func(prev control.Any) (control.Any, error) {
+		next, err := DoThing(prev.(Variable))
+		return control.Any(next), err
 	}
 
 	// now you're workin!
-	return control.Serial(doThing, doThing, doThing, doThing)
+	start := control.Any(a)
+	end, err := control.Waterfall(start, doValue, doValue, doValue, doValue)
+	return end.(Variable), err
 
 }
 ```
@@ -65,7 +68,10 @@ API
 Here are the functions currently supported in `control`:
 
 - `func Serial(...SerialFunc) error`
-   + chain several functions together in order, aborting if any one has an error
+   + call one or more functions sequentially, aborting if any one has an error
+
+- `func Waterfall(Any, ...WaterfallFunc) (Any, error)`
+   + call one or more funciton sequentially, passing the result of the previous function into the next
 
 - `func Parallel(...ParallelFunc) error`
    + run several functions at the same time, aborting if any one has an error
