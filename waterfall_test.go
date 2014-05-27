@@ -6,17 +6,16 @@ import (
 
 func AddOne(val Any) (Any, error) {
 	prev := val.(int)
-	return Any(prev + 1), nil
+	return prev + 1, nil
 }
 
-func TestWaterfallAddOne(t *testing.T) {
+func TestWaterfallAddOne(t *testing.T) int {
 
-	zero := Any(0)
-	four, err := Waterfall(zero, AddOne, AddOne, AddOne, AddOne)
+	four, err := Waterfall(0, AddOne, AddOne, AddOne, AddOne)
 
 	if err != nil {
 		t.Error(err)
-	} else if four.(int) != 4 {
+	} else if four != 4 {
 		t.Fail()
 	}
 

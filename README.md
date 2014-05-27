@@ -48,9 +48,8 @@ func DoThings(a Variable) (Variable, error) {
 	}
 
 	// now you're workin!
-	start := control.Any(a)
-	end, err := control.Waterfall(start, doValue, doValue, doValue, doValue)
-	return end.(Variable), err
+	res, err := control.Waterfall(a, doValue, doValue, doValue, doValue)
+	return res.(Variable), err
 
 }
 ```
