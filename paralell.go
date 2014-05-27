@@ -1,12 +1,18 @@
 package control
 
 type ParallelChan chan<- error
-type ParallelFunc func(done ParallelChan)
+type ParallelFunc func(ParallelChan)
 
-func Parallel(tasks ...ParallelFunc) (err error) {
+func SerialToParallelFunc(serialFunc SerialFunc) ParallelFunc {
+	return func(done ParallelChan) {
+		done <- serialFunc()
+	}
+}
+
+func ParallelSlice(tasks []ParallelFunc) (err error) {
 	total := len(tasks)
 	buffer := make(chan error, total)
-	for _, task := range(tasks) {
+	for _, task := range tasks {
 		go task(buffer)
 	}
 	for i := 0; i < total; i++ {
@@ -15,4 +21,8 @@ func Parallel(tasks ...ParallelFunc) (err error) {
 		}
 	}
 	return
+}
+
+func Parallel(tasks ...ParallelFunc) error {
+	return ParallelSlice(tasks)
 }

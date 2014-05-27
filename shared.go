@@ -1,3 +1,3 @@
 package control
 
-type Any interface { }
+type Any interface{}
